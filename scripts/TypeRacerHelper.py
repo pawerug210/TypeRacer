@@ -27,4 +27,4 @@ class TypeRacerHelper(object):
         return self._correctness
 
     def _isCharCorrect(self, char, index):
-        return self.Text[index] == char
+        return self.Text[index] == char and self._correctness[-1]

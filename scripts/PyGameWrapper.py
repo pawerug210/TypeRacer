@@ -67,11 +67,13 @@ class PyGameWrapper(object):
 
     def _charTyped(self, char):
         self._typeRacer.addChar(char)
+        self._inputTextBox += char
         self._draw()
 
     def _charRemoved(self):
         if self._inputTextBox != '':
             self._typeRacer.removeChar()
+            self._inputTextBox = self._inputTextBox[:-1]
             self._draw()
 
     def displayText(self, text, correctnessList):
@@ -82,10 +84,10 @@ class PyGameWrapper(object):
             screenText = self._font.render(textPart, True, color)
             textWidth, textHeight = self._font.size(textPart)
             self._window.blit(screenText, caretPosition)
-            caretPosition[0] += textWidth
+            # caretPosition[0] += textWidth
 
     def _clear(self):
         self._window.fill(white)
 
     def _update(self):
-        pygame.display.update()
+        pygame.display.flip()
