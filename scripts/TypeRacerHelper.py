@@ -16,9 +16,15 @@ class TypeRacerHelper(object):
         self.UserText.append(char)
         self._correctness.append(self._isCharCorrect(char, len(self._correctness)))
 
-    def removeChar(self):
-        del self.UserText[-1]
-        del self._correctness[-1]
+    def removeChar(self, n=1):
+        if n > 0:
+            del self.UserText[-n:]
+            del self._correctness[-n:]
+
+    def addText(self, text, startPosition):
+        self.removeChar(len(self.UserText) - startPosition)
+        for char in text:
+            self.addChar(char)
 
     def isNewWord(self):
         return self.UserText[-1] == ' ' and all(self._correctness)
@@ -27,4 +33,4 @@ class TypeRacerHelper(object):
         return self._correctness
 
     def _isCharCorrect(self, char, index):
-        return self.Text[index] == char and self._correctness[-1]
+        return self.Text[index] == char and (len(self._correctness) == 0 or self._correctness[-1])
