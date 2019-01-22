@@ -28,7 +28,7 @@ class TypeRacerHelper(object):
             self.addChar(char)
 
     def isNewWord(self):
-        return self.UserText[-1] == ' ' and all(self._correctness)
+        return any(self.UserText) and self.UserText[-1] == ' ' and all(self._correctness)
 
     def isFinished(self):
         return len(self._correctness) == len(self.Text) and all(self._correctness)
