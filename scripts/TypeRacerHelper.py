@@ -22,12 +22,16 @@ class TypeRacerHelper(object):
             del self._correctness[-n:]
 
     def addText(self, text, startPosition):
+        # remove last chars to the point where word (text) starts
         self.removeChar(len(self.UserText) - startPosition)
         for char in text:
             self.addChar(char)
 
     def isNewWord(self):
         return self.UserText[-1] == ' ' and all(self._correctness)
+
+    def isFinished(self):
+        return len(self._correctness) == len(self.Text) and all(self._correctness)
 
     def getCorrectnessList(self):
         return self._correctness

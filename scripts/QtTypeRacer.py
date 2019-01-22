@@ -1,5 +1,4 @@
-import math
-from PyQt5.QtWidgets import QWidget, QLineEdit, QGridLayout, QTextEdit, QProgressBar
+from PyQt5.QtWidgets import QWidget, QLineEdit, QGridLayout, QTextEdit, QProgressBar, QMessageBox
 from PyQt5.QtGui import QColor
 from PyQt5 import QtCore
 
@@ -8,7 +7,7 @@ import TypeRacerHelper
 
 
 class QtTypeRacer(QWidget):
-
+    
     Running = False
     CorrectnessColorsMap = {
         True: 'green',
@@ -27,7 +26,7 @@ class QtTypeRacer(QWidget):
         self.Running = True
         self._typeRacer.setText(text)
         self._createWindow()
-        self._writeText(text, [None] * len(text))
+        self._updateMainText(text, [None] * len(text))
 
     def _createWindow(self):
         self.resize(*self._windowLayout.windowSize)
@@ -38,6 +37,7 @@ class QtTypeRacer(QWidget):
         self.userInputTextBox.move(20, 20)
         self.userInputTextBox.resize(280, 40)
         self.userInputTextBox.textEdited.connect(self._textEdited)
+        self.userInputTextBox.setMaxLength(len(self._typeRacer.Text))
 
         # main text
         self.mainText = QTextEdit()
@@ -74,12 +74,25 @@ class QtTypeRacer(QWidget):
         if self._typeRacer.isNewWord():
             self.userInputTextBox.clear()
             self._checkpoint += len(inputText)
+        self._updateWindow()
+        if self.progress == 100:
+            self._proceedGameFinish()
+
+    def _updateWindow(self):
         wholeText = self._typeRacer.Text
         correctnessListPadded = Common.addNonePadding(self._typeRacer.getCorrectnessList(), len(wholeText))
-        self._writeText(wholeText, correctnessListPadded)
+        self._updateInputTextBox()
+        self._updateMainText(wholeText, correctnessListPadded)
         self._updateProgressBar(correctnessListPadded)
 
-    def _writeText(self, text, correctnessList):
+    def _updateProgressBar(self, correctnessList):
+        self.progress = (len([x for x in correctnessList if x]) / len(correctnessList)) * 100
+        self.progressBar.setValue(self.progress)
+
+    def _updateInputTextBox(self):
+        self.userInputTextBox.setMaxLength(len(self._typeRacer.Text) - self._checkpoint)
+
+    def _updateMainText(self, text, correctnessList):
         self.mainText.clear()
         for value in [True, False, None]:
             color = self.CorrectnessColorsMap[value]
@@ -87,8 +100,11 @@ class QtTypeRacer(QWidget):
             self.mainText.setTextColor(QColor(color))
             self.mainText.insertPlainText(textPart)
 
-    def _updateProgressBar(self, correctnessList):
-        self.progress = (len([x for x in correctnessList if x]) / len(correctnessList)) * 100
-        self.progressBar.setValue(self.progress)
+    def _proceedGameFinish(self):
+        self.userInputTextBox.clear()
+        self.userInputTextBox.setDisabled(True)
+        self._showResultMessageBox(10.0)
 
-
+    def _showResultMessageBox(self, results):
+        QMessageBox.question(self, 'Congratulations', str.format('Game time {0}s', results),
+                             QMessageBox.Ok, QMessageBox.Ok)
