@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QLineEdit, QGridLayout, QTextEdit, QProgressBar, QMessageBox
+from PyQt5.QtWidgets import QWidget, QLineEdit, QGridLayout, QTextEdit, QProgressBar, QMessageBox, QPushButton
 from PyQt5.QtGui import QColor
 from PyQt5 import QtCore
 
@@ -7,7 +7,7 @@ import TypeRacerHelper
 
 
 class QtTypeRacer(QWidget):
-    
+
     Running = False
     CorrectnessColorsMap = {
         True: 'green',
@@ -21,6 +21,7 @@ class QtTypeRacer(QWidget):
         self._typeRacer = TypeRacerHelper.TypeRacerHelper()
         self._checkpoint = 0
         self.progress = 0
+        self._counter = 0
 
     def run(self, text):
         self.Running = True
@@ -34,8 +35,9 @@ class QtTypeRacer(QWidget):
 
         # input text box
         self.userInputTextBox = QLineEdit()
-        self.userInputTextBox.move(20, 20)
+        # self.userInputTextBox.move(20, 20)
         self.userInputTextBox.resize(280, 40)
+        self.userInputTextBox.setDisabled(True)
         self.userInputTextBox.textEdited.connect(self._textEdited)
         self.userInputTextBox.setMaxLength(len(self._typeRacer.Text))
 
@@ -49,11 +51,17 @@ class QtTypeRacer(QWidget):
         self.progressBar = QProgressBar()
         self.progressBar.setGeometry(200, 80, 250, 20)
 
+        # start button
+        self.startButton = QPushButton()
+        self.startButton.setText('Start')
+        self.startButton.clicked.connect(self.startClick)
+
         # Layout
         self.layout = QGridLayout()
         self.layout.addWidget(self.progressBar, 0, 0)
         self.layout.addWidget(self.mainText, 1, 0)
         self.layout.addWidget(self.userInputTextBox, 2, 0)
+        self.layout.addWidget(self.startButton, 2, 1)
         self.layout.setContentsMargins(5, 5, 5, 5)
         self.layout.setSpacing(5)
 
@@ -68,7 +76,32 @@ class QtTypeRacer(QWidget):
             self.Running = False
         event.accept()
 
-    def _textEdited(self, widget, *args):
+    def startClick(self):
+        self._startingCountdown(3)
+
+    def _startingCountdown(self, duration):
+        def handleTimer():
+            self._counter -= 1
+            self._setUserInputText(str(self._counter))
+            if self._counter == 0:
+                self.timer.stop()
+                self.startGame()
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(handleTimer)
+        self.timer.start(1000)  # miliseconds
+        self._counter = duration
+        self._setUserInputText(str(self._counter))
+
+    def startGame(self):
+        self.startButton.setDisabled(True)
+        self.userInputTextBox.setDisabled(False)
+        self.userInputTextBox.clear()
+        self.userInputTextBox.setFocus()
+
+    def _setUserInputText(self, text):
+        self.userInputTextBox.setText(text)
+
+    def _textEdited(self):
         inputText = self.userInputTextBox.text()
         self._typeRacer.addText(inputText, self._checkpoint)
         if self._typeRacer.isNewWord():
