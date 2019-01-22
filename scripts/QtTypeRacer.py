@@ -35,8 +35,6 @@ class QtTypeRacer(QWidget):
 
         # input text box
         self.userInputTextBox = QLineEdit()
-        # self.userInputTextBox.move(20, 20)
-        self.userInputTextBox.resize(280, 40)
         self.userInputTextBox.setDisabled(True)
         self.userInputTextBox.textEdited.connect(self._textEdited)
         self.userInputTextBox.setMaxLength(len(self._typeRacer.Text))
@@ -58,10 +56,10 @@ class QtTypeRacer(QWidget):
 
         # Layout
         self.layout = QGridLayout()
-        self.layout.addWidget(self.progressBar, 0, 0)
-        self.layout.addWidget(self.mainText, 1, 0)
-        self.layout.addWidget(self.userInputTextBox, 2, 0)
-        self.layout.addWidget(self.startButton, 2, 1)
+        self.layout.addWidget(self.progressBar, 0, 0, 1, 2)
+        self.layout.addWidget(self.mainText, 1, 0, 1, 2)
+        self.layout.addWidget(self.userInputTextBox, 2, 0, 1, 1)
+        self.layout.addWidget(self.startButton, 2, 1, 1, 1)
         self.layout.setContentsMargins(5, 5, 5, 5)
         self.layout.setSpacing(5)
 
