@@ -9,8 +9,7 @@ class TypeRacerHelper(object):
 
     def setText(self, text):
         self.Text = text
-        self.UserText = []
-        self._correctness = []
+        self.reset()
 
     def addChar(self, char):
         self.UserText.append(char)
@@ -35,6 +34,10 @@ class TypeRacerHelper(object):
 
     def getCorrectnessList(self):
         return self._correctness
+
+    def reset(self):
+        self.UserText = []
+        self._correctness = []
 
     def _isCharCorrect(self, char, index):
         return self.Text[index] == char and (len(self._correctness) == 0 or self._correctness[-1])

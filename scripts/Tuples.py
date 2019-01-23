@@ -1,8 +1,8 @@
 from collections import namedtuple
 
 WindowLayout = namedtuple('WindowLayout',
-                          ['mainTextPosition',
-                           'inputTextPosition',
-                           'progressIndicatorPosition',
-                           'windowSize'],
-                          verbose=True)
+                          ['windowTitle',
+                           'windowSize'])
+
+GameResults = namedtuple('GameResults',
+                         ['gameTime'])

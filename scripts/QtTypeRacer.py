@@ -3,6 +3,7 @@ from PyQt5.QtGui import QColor
 from PyQt5 import QtCore
 
 import Common
+import Timer
 import TypeRacerHelper
 
 
@@ -22,6 +23,7 @@ class QtTypeRacer(QWidget):
         self._checkpoint = 0
         self.progress = 0
         self._counter = 0
+        self._timer = Timer.Timer()
 
     def run(self, text):
         self.Running = True
@@ -31,7 +33,7 @@ class QtTypeRacer(QWidget):
 
     def _createWindow(self):
         self.resize(*self._windowLayout.windowSize)
-        self.setWindowTitle("Type Racer")
+        self.setWindowTitle(self._windowLayout.windowTitle)
 
         # input text box
         self.userInputTextBox = QLineEdit()
@@ -47,7 +49,6 @@ class QtTypeRacer(QWidget):
 
         # progress bar
         self.progressBar = QProgressBar()
-        self.progressBar.setGeometry(200, 80, 250, 20)
 
         # start button
         self.startButton = QPushButton()
@@ -60,7 +61,7 @@ class QtTypeRacer(QWidget):
         self.layout.addWidget(self.mainText, 1, 0, 1, 2)
         self.layout.addWidget(self.userInputTextBox, 2, 0, 1, 1)
         self.layout.addWidget(self.startButton, 2, 1, 1, 1)
-        self.layout.setContentsMargins(5, 5, 5, 5)
+        self.layout.setContentsMargins(10, 10, 10, 10)
         self.layout.setSpacing(5)
 
         self.setLayout(self.layout)
@@ -95,6 +96,13 @@ class QtTypeRacer(QWidget):
         self.userInputTextBox.setDisabled(False)
         self.userInputTextBox.clear()
         self.userInputTextBox.setFocus()
+        self._timer.start()
+
+    def reset(self):
+        self._typeRacer.reset()
+        self._checkpoint = 0
+        self._updateWindow()
+        self.startButton.setDisabled(False)
 
     def _setUserInputText(self, text):
         self.userInputTextBox.setText(text)
@@ -134,8 +142,11 @@ class QtTypeRacer(QWidget):
     def _proceedGameFinish(self):
         self.userInputTextBox.clear()
         self.userInputTextBox.setDisabled(True)
-        self._showResultMessageBox(10.0)
+        self._showResultMessageBox(self._timer.stop())
 
     def _showResultMessageBox(self, results):
-        QMessageBox.question(self, 'Congratulations', str.format('Game time {0}s', results),
+        clickedButton = QMessageBox.question(self, 'Congratulations', str.format('Game time {0:.1f}s', results),
                              QMessageBox.Ok, QMessageBox.Ok)
+        if clickedButton == QMessageBox.Ok:
+            self.reset()
+

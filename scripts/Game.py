@@ -1,20 +1,18 @@
 from PyQt5.QtWidgets import QApplication
+
+import Common
 import QtTypeRacer
 import Tuples
 import sys
-import Common
-
-text = 'By using Keras as the high-level API'
 
 
 class Game(object):
 
-    def start(self):
-        layout = Tuples.WindowLayout(inputTextPosition=[20, 100],
-                                     mainTextPosition=[20, 50],
-                                     progressIndicatorPosition=[20, 20],
-                                     windowSize=[800, 600])
+    @staticmethod
+    def start():
+        layout = Tuples.WindowLayout(windowTitle='Type Racer',
+                                     windowSize=[400, 300])
         app = QApplication(sys.argv)
         instance = QtTypeRacer.QtTypeRacer(layout)
-        instance.run(text)
+        instance.run(Common.readFile(sys.argv[1]))
         sys.exit(app.exec_())

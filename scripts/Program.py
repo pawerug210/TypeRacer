@@ -2,8 +2,7 @@ import Game
 
 
 def main():
-    game = Game.Game()
-    game.start()
+    Game.Game.start()
 
 
 if __name__ == '__main__':
